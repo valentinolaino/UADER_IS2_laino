@@ -1,22 +1,50 @@
 #!/usr/bin/env python3
-import sys, math
+
+"""
+Este modulo permite hacer calculos con notación RPN.
+"""
+
+import math
+import sys
+
 
 class RPNError(Exception):
-    pass
+    """
+    Clase que contiene las exepciones relacionadas con RPN.
+    """
+
 
 def is_num(x):
+    """
+    Verifica si el parametro x es un numero valido
+    """
     try:
         float(x)
         return True
-    except:
+    except ValueError:
         return False
 
-def deg(x): return math.radians(x)
-def rad(x): return math.degrees(x)
+
+def deg(x):
+    """
+    Convierte grados a radianes
+    """
+    return math.radians(x)
+
+
+def rad(x):
+    """
+    Convierte radianes a grados
+    """
+    return math.degrees(x)
+
 
 def eval_rpn(expr):
+    """
+    Lee el string ingresado y hace el calculo
+    """
     stack = []
-    mem = [0.0]*10
+    mem = [0.0] * 10
 
     def need(n):
         if len(stack) < n:
@@ -34,21 +62,28 @@ def eval_rpn(expr):
         elif t in "+-*/":
             need(2)
             b, a = stack.pop(), stack.pop()
-            if t == "+": stack.append(a + b)
-            elif t == "-": stack.append(a - b)
-            elif t == "*": stack.append(a * b)
+            if t == "+":
+                stack.append(a + b)
+            elif t == "-":
+                stack.append(a - b)
+            elif t == "*":
+                stack.append(a * b)
             elif t == "/":
-                if b == 0: raise RPNError("División por cero")
+                if b == 0:
+                    raise RPNError("División por cero")
                 stack.append(a / b)
 
         elif t == "dup":
-            need(1); stack.append(stack[-1])
+            need(1)
+            stack.append(stack[-1])
 
         elif t == "swap":
-            need(2); stack[-1], stack[-2] = stack[-2], stack[-1]
+            need(2)
+            stack[-1], stack[-2] = stack[-2], stack[-1]
 
         elif t == "drop":
-            need(1); stack.pop()
+            need(1)
+            stack.pop()
 
         elif t == "clear":
             stack.clear()
@@ -58,25 +93,31 @@ def eval_rpn(expr):
         elif t == "e":
             stack.append(math.e)
         elif t == "j":
-            stack.append((1 + 5**0.5)/2)
+            stack.append((1 + 5**0.5) / 2)
 
         elif t == "chs":
-            need(1); stack[-1] = -stack[-1]
+            need(1)
+            stack[-1] = -stack[-1]
 
         elif t == "sqrt":
-            need(1); stack.append(math.sqrt(stack.pop()))
+            need(1)
+            stack.append(math.sqrt(stack.pop()))
 
         elif t == "log":
-            need(1); stack.append(math.log10(stack.pop()))
+            need(1)
+            stack.append(math.log10(stack.pop()))
 
         elif t == "ln":
-            need(1); stack.append(math.log(stack.pop()))
+            need(1)
+            stack.append(math.log(stack.pop()))
 
         elif t == "ex":
-            need(1); stack.append(math.exp(stack.pop()))
+            need(1)
+            stack.append(math.exp(stack.pop()))
 
         elif t == "10x":
-            need(1); stack.append(10**stack.pop())
+            need(1)
+            stack.append(10 ** stack.pop())
 
         elif t == "yx":
             need(2)
@@ -86,31 +127,38 @@ def eval_rpn(expr):
         elif t == "1/x":
             need(1)
             x = stack.pop()
-            if x == 0: raise RPNError("División por cero")
-            stack.append(1/x)
+            if x == 0:
+                raise RPNError("División por cero")
+            stack.append(1 / x)
 
-        elif t in ("sin","cos","tg","asin","acos","atg"):
+        elif t in ("sin", "cos", "tg", "asin", "acos", "atg"):
             need(1)
             x = stack.pop()
-            if t == "sin": stack.append(math.sin(deg(x)))
-            elif t == "cos": stack.append(math.cos(deg(x)))
-            elif t == "tg": stack.append(math.tan(deg(x)))
-            elif t == "asin": stack.append(rad(math.asin(x)))
-            elif t == "acos": stack.append(rad(math.acos(x)))
-            elif t == "atg": stack.append(rad(math.atan(x)))
+            if t == "sin":
+                stack.append(math.sin(deg(x)))
+            elif t == "cos":
+                stack.append(math.cos(deg(x)))
+            elif t == "tg":
+                stack.append(math.tan(deg(x)))
+            elif t == "asin":
+                stack.append(rad(math.asin(x)))
+            elif t == "acos":
+                stack.append(rad(math.acos(x)))
+            elif t == "atg":
+                stack.append(rad(math.atan(x)))
 
-        elif t in ("sto","rcl"):
-            if i+1 >= len(tokens):
+        elif t in ("sto", "rcl"):
+            if i + 1 >= len(tokens):
                 raise RPNError("Falta índice de memoria")
 
-            idx = tokens[i+1]
+            idx = tokens[i + 1]
             if not (idx.isdigit() and 0 <= int(idx) <= 9):
                 raise RPNError("Memoria inválida")
             idx = int(idx)
 
             if t == "sto":
                 need(1)
-                mem[idx] = stack.pop()   # 🔥 FIX
+                mem[idx] = stack.pop()  # 🔥 FIX
             else:
                 stack.append(mem[idx])
 
@@ -126,12 +174,18 @@ def eval_rpn(expr):
 
     return stack[0]
 
+
 def main():
+    """
+    Busca el string en los argumentos o lo pide al usuario
+    mediante input, luego llama a eval_rpn
+    """
     try:
         expr = " ".join(sys.argv[1:]) if len(sys.argv) > 1 else input("RPN> ")
         print(eval_rpn(expr))
     except RPNError as e:
         print("Error:", e)
+
 
 if __name__ == "__main__":
     main()
