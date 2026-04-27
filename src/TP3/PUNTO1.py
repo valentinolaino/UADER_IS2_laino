@@ -1,40 +1,46 @@
-# Provea una clase que dado un número entero cualquiera retorne el factorial del mismo, 
-# debe asegurarse que todas las clases que lo invoquen utilicen la misma instancia de clase.
 from threading import Lock
 
 
 class Factorial:
-    """
-    Singleton para calcular el factorial de un número.
-    """
-
     _instancia = None
-    _lock = Lock() 
+    _lock = Lock()
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls):
+        # Verifica si ya existe una instancia
         if cls._instancia is None:
             with cls._lock:
-                if cls._instancia is None:  # doble verificación
-                    cls._instancia = super().__new__(cls)
+                if cls._instancia is None:
+                    cls._instancia = super(Factorial, cls).__new__(cls)
         return cls._instancia
 
-    def __init__(self, archivo_config: str = None):
-        """
-        Inicializa...
-        """
-        if not hasattr(self, "_inicializado"):
-            self._config = {}
-            if archivo_config:
-                self._cargar_desde_archivo(archivo_config)
-            self._inicializado = True
+    def factorial(self, n):
+        if n < 0:
+            raise ValueError("El factorial no está definido para números negativos.")
+        
+        resultado = 1
+        for i in range(1, n + 1):
+            resultado *= i
+        return resultado
+    
+    def __str__(self):
+        return hex(id(self))
 
 
+# Programa principal
+if __name__ == "__main__":
+    # Se crean dos variables, pero apuntan a la misma instancia
+    obj1 = Factorial()
+    obj2 = Factorial()
 
-    def calculo_factorial(self, n):
-        if n == 0:
-            return 1
-        else:
-            return n * self.calculo_factorial(n - 1)
+    numero = int(input("Ingrese un número entero: "))
 
+    print("Factorial:", obj1.factorial(numero))
 
+    # Verificación del patrón Singleton
+    if obj1 is obj2:
+        print("Ambos objetos comparten la misma instancia.")
+    else:
+        print("Son instancias diferentes.")
 
+    print(obj1)
+    print(obj2)
