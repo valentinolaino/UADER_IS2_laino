@@ -1,0 +1,14 @@
+{
+	"datos": [
+		{ "loc": 1000, "esfuerzo_pm": 2 },
+		{ "loc": 2000, "esfuerzo_pm": 3 },
+		{ "loc": 3000, "esfuerzo_pm": 5 },
+		{ "loc": 4000, "esfuerzo_pm": 7 },
+		{ "loc": 5000, "esfuerzo_pm": 11 },
+		{ "loc": 6000, "esfuerzo_pm": 13 },
+		{ "loc": 7000, "esfuerzo_pm": 17 },
+		{ "loc": 8000, "esfuerzo_pm": 19 },
+		{ "loc": 9000, "esfuerzo_pm": 23 },
+		{ "loc": 10000, "esfuerzo_pm": 29 }
+	]
+}
